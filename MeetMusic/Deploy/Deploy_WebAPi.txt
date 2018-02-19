@@ -8,28 +8,6 @@ Install .Net core 2.1.4:
 
 ###################################################################
 
-Install and configure nginx:
-
-    - sudo apt-get install nginx
-    - sudo vim /etc/nginx/sites-available/default
-
-    server {
-        listen 443;
-
-        location / {
-            proxy_pass http://localhost:44364;
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection keep-alive;
-            proxy_set_header Host $host;
-            proxy_cache_bypass $http_upgrade;
-        }
-    }
-
-    - sudo nginx -s reload
-
-###################################################################
-
 Create certificate:
 
     - sudo apt-get install openssl
@@ -143,6 +121,32 @@ Create certificate:
     - openssl ca -in /MeetMusicCertificates/localhost/localhostCsr.pem -out /MeetMusicCertificates/localhost/localhostCertificate.pem
     - cd /MeetMusicCertificates/localhost
     - openssl pkcs12 -export -in localhostCertificate.pem -inkey localhostPrivateKey.pem -out localhost.pfx
+    - openssl pkcs12 -in localhost.pfx -clcerts -nokeys -out public.crt
+    - openssl pkcs12 -in localhost.pfx -nocerts -nodes -out private.rsa
+
+###################################################################
+
+Install and configure nginx:
+
+    - sudo apt-get install nginx
+    - sudo vim /etc/nginx/sites-available/default
+
+    server {
+        listen 443 ssl;
+        ssl_certificate     /MeetMusicCertificates/localhost/public.crt;
+        ssl_certificate_key /MeetMusicCertificates/localhost/private.rsa;
+
+        location / {
+            proxy_pass https://localhost:5000;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection keep-alive;
+            proxy_set_header Host $host;
+            proxy_cache_bypass $http_upgrade;
+        }
+    }
+
+    - sudo nginx -s reload
 
 ###################################################################
 
