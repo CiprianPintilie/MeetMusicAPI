@@ -1,0 +1,75 @@
+###################################################################
+
+Install .Net core 2.1.4:
+
+    - sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-xenial-prod xenial main" > /etc/apt/sources.list.d/dotnetdev.list'
+    - sudo apt-get update
+    - sudo apt-get install dotnet-sdk-2.1.4
+
+###################################################################
+
+Install and configure nginx:
+
+    - sudo apt-get install nginx
+    - sudo vim /etc/nginx/sites-available/default
+
+    server {
+        listen 80;
+
+        location / {
+            proxy_pass http://localhost:5000;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection keep-alive;
+            proxy_set_header Host $host;
+            proxy_cache_bypass $http_upgrade;
+        }
+    }
+
+###################################################################
+
+Deploy API:
+
+    - cd /sources/MeetMusic
+    // First time only, then sudo git pull
+    - sudo git clone https://github.com/CiprianPintilie/MeetMusicAPI
+    - cd MeetMusicAPI
+    - sudo dotnet restore
+    - sudo dotnet publish -c release -o /var/www/MeetMusic -r linux-x64
+
+###################################################################
+
+Create service:
+
+    sudo vim /etc/systemd/system/kestrel-MeetMusic.service
+
+    [Unit]
+    Description=MeetMusic
+
+    [Service]
+    WorkingDirectory=/var/www/MeetMusic
+    ExecStart=/usr/bin/dotnet /var/www/MeetMusic/MeetMusic.dll
+    Restart=always
+    RestartSec=10
+    SyslogIdentifier=MeetMusic
+    User=www-data
+    Environment=ASPNETCORE_ENVIRONMENT=Production
+
+    [Install]
+    WantedBy=multi-user.target
+
+###################################################################
+
+Start service:
+
+    - sudo systemctl enable kestrel-MeetMusic.service
+    - sudo systemctl start kestrel-MeetMusic.service
+    - sudo systemctl status kestrel-MeetMusic.service
+
+###################################################################
+
+Kill app :
+
+    - sudo killall dotnet
+
+###################################################################
