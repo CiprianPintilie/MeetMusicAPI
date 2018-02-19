@@ -8,145 +8,59 @@ Install .Net core 2.1.4:
 
 ###################################################################
 
-Create certificate:
-
-    - sudo apt-get install openssl
-    - sudo mkdir /MeetMusicSSL
-    - sudo mkdir /MeetMusicSSL/certificates
-    - sudo vim caconf.cnf
-
-    [ ca ]
-    default_ca      = local_ca
-    #
-    #
-    # Default location of directories and files needed to generate certificates.
-    #
-    [ local_ca ]
-    dir             = /MeetMusicSSL
-    certificate     = $dir/certificateAuthorityCertificate.pem
-    database        = $dir/index.txt
-    new_certs_dir   = $dir/certificates
-    private_key     = $dir/certificateAuthorityPrivateKey.pem
-    serial          = $dir/serial
-    #
-    #
-    # Default expiration and encryption policies for certificates.
-    #
-    default_crl_days        = 365
-    default_days            = 1825
-    default_md              = sha256
-    #
-    policy          = local_ca_policy
-    x509_extensions = local_ca_extensions
-    #
-    #
-    # Copy extensions specified in the certificate request
-    #
-    copy_extensions = copy
-    #
-    #
-    # Default policy to use when generating server certificates.  The following
-    # fields must be defined in the server certificate.
-    #
-    [ local_ca_policy ]
-    commonName              = supplied
-    stateOrProvinceName     = supplied
-    countryName             = supplied
-    emailAddress            = supplied
-    organizationName        = supplied
-    organizationalUnitName  = supplied
-    #
-    #
-    # x509 extensions to use when generating server certificates.
-    #
-    [ local_ca_extensions ]
-    basicConstraints        = CA:false
-    #
-    #
-    # The default root certificate generation policy.
-    #
-    [ req ]
-    default_bits    = 2048
-    default_keyfile = /MeetMusicSSL/certificateAuthorityPrivateKey.pem
-    default_md      = sha256
-    #
-    prompt                  = no
-    distinguished_name      = root_ca_distinguished_name
-    x509_extensions         = root_ca_extensions
-    #
-    #
-    # Root Certificate Authority distinguished name.  Change these fields to match
-    # your local environment!
-    #
-    [ root_ca_distinguished_name ]
-    commonName              = MeetMusicAuthority
-    stateOrProvinceName     = France
-    countryName             = FR
-    emailAddress            = pintilie.ciprian@outlook.fr
-    organizationName        = MeetMusic
-    organizationalUnitName  = MeetMusic
-    #
-    [ root_ca_extensions ]
-    basicConstraints        = CA:true
-
-    - export OPENSSL_CONF=/MeetMusicSSL/caconf.cnf
-    - openssl req -x509 -out certificateAuthorityCertificate.pem -newkey rsa:2048 -keyout certificateAuthorityPrivateKey.pem -days 365
-    //To check if ok
-    - openssl x509 -in certificateAuthorityCertificate.pem -text 
-    - sudo mkdir /MeetMusicCertificates
-    - sudo mkdir /MeetMusicCertificates/localhost
-    - cd /MeetMusicCertificates/localhost
-    - sudo vim localhost.cnf
-
-    [ req ]
-    prompt                  = no
-    distinguished_name      = server_distinguished_name
-    req_extensions          = v3_req
-
-    [ server_distinguished_name ]
-    commonName              = localhost
-    stateOrProvinceName     = France
-    countryName             = FR
-    emailAddress            = pintilie.ciprian@outlook.fr
-    organizationName        = MeetMusic
-    organizationalUnitName  = MeetMusic
-
-    [ v3_req ]
-    basicConstraints        = CA:FALSE
-    keyUsage                = nonRepudiation, digitalSignature, keyEncipherment
-
-    - export OPENSSL_CONF=/MeetMusicCertificates/localhost/localhost.cnf
-    - openssl req -out localhostCsr.pem -newkey rsa:2048 -keyout localhostPrivateKey.pem
-    - export OPENSSL_CONF=/MeetMusicSSL/caconf.cnf
-    - openssl ca -in /MeetMusicCertificates/localhost/localhostCsr.pem -out /MeetMusicCertificates/localhost/localhostCertificate.pem
-    - cd /MeetMusicCertificates/localhost
-    - openssl pkcs12 -export -in localhostCertificate.pem -inkey localhostPrivateKey.pem -out localhost.pfx
-    - openssl pkcs12 -in localhost.pfx -clcerts -nokeys -out public.crt
-    - openssl pkcs12 -in localhost.pfx -nocerts -nodes -out private.rsa
-
-###################################################################
-
-Install and configure nginx:
+Create self signed certificate and configure nginx:
 
     - sudo apt-get install nginx
-    - sudo vim /etc/nginx/sites-available/default
+    - sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
+    - sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+    - sudo nano /etc/nginx/snippets/self-signed.conf
+        ssl_certificate /etc/ssl/certs/nginx-selfsigned.crt;
+        ssl_certificate_key /etc/ssl/private/nginx-selfsigned.key;
 
-    server {
-        listen 443 ssl;
-        ssl_certificate     /MeetMusicCertificates/localhost/public.crt;
-        ssl_certificate_key /MeetMusicCertificates/localhost/private.rsa;
+    - sudo nano /etc/nginx/snippets/ssl-params.conf
+        # from https://cipherli.st/
+        # and https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html
 
-        location / {
-            proxy_pass https://localhost:5000;
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection keep-alive;
-            proxy_set_header Host $host;
-            proxy_cache_bypass $http_upgrade;
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_prefer_server_ciphers on;
+        ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH";
+        ssl_ecdh_curve secp384r1;
+        ssl_session_cache shared:SSL:10m;
+        ssl_session_tickets off;
+        ssl_stapling on;
+        ssl_stapling_verify on;
+        resolver 8.8.8.8 8.8.4.4 valid=300s;
+        resolver_timeout 5s;
+        # Disable preloading HSTS for now.  You can use the commented out header line that includes
+        # the "preload" directive if you understand the implications.
+        #add_header Strict-Transport-Security "max-age=63072000; includeSubdomains; preload";
+        add_header Strict-Transport-Security "max-age=63072000; includeSubdomains";
+        add_header X-Frame-Options DENY;
+        add_header X-Content-Type-Options nosniff;
+
+        ssl_dhparam /etc/ssl/certs/dhparam.pem;
+
+    - sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak
+    - sudo nano /etc/nginx/sites-available/default
+        server {
+            listen 80 default_server;
+            listen [::]:80 default_server;
+            server_name 54.38.33.198;
+            return 302 https://$server_name$request_uri;
         }
-    }
 
-    - sudo nginx -s reload
+        server {
+            # SSL configuration
+            listen 443 ssl http2 default_server;
+            listen [::]:443 ssl http2 default_server;
+            include snippets/self-signed.conf;
+            include snippets/ssl-params.conf;
+        }
+
+    - sudo ufw allow 'Nginx Full'
+    - sudo ufw delete allow 'Nginx HTTP'
+    - sudo ufw status
+    - sudo nginx -t
 
 ###################################################################
 
@@ -162,6 +76,7 @@ Deploy API:
     - cd /sources/MeetMusic/MeetMusicAPI/MeetMusic
     - sudo dotnet restore
     - sudo dotnet publish -c release -o /var/www/MeetMusic -r linux-x64
+    - sudo systemctl restart nginx
 
 ###################################################################
 
