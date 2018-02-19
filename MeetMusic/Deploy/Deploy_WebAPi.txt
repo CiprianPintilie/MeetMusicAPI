@@ -14,10 +14,10 @@ Install and configure nginx:
     - sudo vim /etc/nginx/sites-available/default
 
     server {
-        listen 80;
+        listen 443;
 
         location / {
-            proxy_pass http://localhost:5000;
+            proxy_pass http://localhost:44364;
             proxy_http_version 1.1;
             proxy_set_header Upgrade $http_upgrade;
             proxy_set_header Connection keep-alive;
@@ -26,14 +26,20 @@ Install and configure nginx:
         }
     }
 
+    - sudo nginx -s reload
+
 ###################################################################
 
 Deploy API:
 
+    //Create repository
     - cd /sources/MeetMusic
-    // First time only, then sudo git pull
     - sudo git clone https://github.com/CiprianPintilie/MeetMusicAPI
-    - cd MeetMusicAPI
+    //Update repository
+    - cd /sources/MeetMusic/MeetMusicAPI
+    - sudo git pull
+    //Publish
+    - cd /sources/MeetMusic/MeetMusicAPI/MeetMusic
     - sudo dotnet restore
     - sudo dotnet publish -c release -o /var/www/MeetMusic -r linux-x64
 
