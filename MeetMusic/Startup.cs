@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using MeetMusic.Context;
+using MeetMusic.Interfaces;
+using MeetMusic.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,9 +21,17 @@ namespace MeetMusic
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Add db context
+            services.AddDbContext<MeetMusicDbContext>(options => 
+            { 
+                options.UseMySQL(Configuration.GetConnectionString("DefaultConnection")); 
+            });
+
+            //----- Configuration du service pour le User -----//
+            services.AddTransient<IUserService, UserService>();
+
             services.AddMvc();
-            //----- Configuration du services pour la db -----//
-            services.Add(new ServiceDescriptor(typeof(MeetDbContext), new MeetDbContext(Configuration.GetConnectionString("DefaultConnection"))));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeetMusic", "MeetMusic\MeetMusic.csproj", "{419B1D6A-517C-4846-9609-F0891CF03C45}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeetMusicModels", "MeetMusicModels\MeetMusicModels.csproj", "{BCC21F7C-99AA-4968-A0D9-CD810A32E0E6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{419B1D6A-517C-4846-9609-F0891CF03C45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{419B1D6A-517C-4846-9609-F0891CF03C45}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{419B1D6A-517C-4846-9609-F0891CF03C45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCC21F7C-99AA-4968-A0D9-CD810A32E0E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCC21F7C-99AA-4968-A0D9-CD810A32E0E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCC21F7C-99AA-4968-A0D9-CD810A32E0E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCC21F7C-99AA-4968-A0D9-CD810A32E0E6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

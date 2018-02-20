@@ -1,7 +1,15 @@
 ﻿<Properties StartupConfiguration="{419B1D6A-517C-4846-9609-F0891CF03C45}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="MeetMusic/Data/MeetDbContext.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="MeetMusic/Provider/SQLLoggerProvider.cs">
     <Files>
-      <File FileName="MeetMusic/Data/MeetDbContext.cs" Line="18" Column="58" />
+      <File FileName="MeetMusic/Context/MeetMusicDbContext.cs" Line="30" Column="34" />
+      <File FileName="MeetMusic/Controllers/UserController.cs" Line="14" Column="6" />
+      <File FileName="MeetMusic/Startup.cs" Line="28" Column="13" />
+      <File FileName="MeetMusicModels/Models/User.cs" Line="31" Column="9" />
+      <File FileName="MeetMusicModels/Models/ModelBase.cs" Line="18" Column="42" />
+      <File FileName="MeetMusic/appsettings.json" Line="19" Column="1" />
+      <File FileName="MeetMusic/Interfaces/IUserService.cs" Line="9" Column="6" />
+      <File FileName="MeetMusic/Services/UserService.cs" Line="22" Column="1" />
+      <File FileName="MeetMusic/Provider/SQLLoggerProvider.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
