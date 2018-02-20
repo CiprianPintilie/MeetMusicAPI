@@ -18,6 +18,8 @@ namespace MeetMusic
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            //----- Configuration du services pour la db -----//
+            services.Add(new ServiceDescriptor(typeof(MeetDbContext), new MeetDbContext(Configuration.GetConnectionString("DefaultConnection"))));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
