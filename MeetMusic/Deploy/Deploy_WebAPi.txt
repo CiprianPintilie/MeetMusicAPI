@@ -1,15 +1,8 @@
 ###################################################################
 
-Install .Net core 2.1.4:
-
-    - sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-xenial-prod xenial main" > /etc/apt/sources.list.d/dotnetdev.list'
-    - sudo apt-get update
-    - sudo apt-get install dotnet-sdk-2.1.4
-
-###################################################################
-
 Create self signed certificate and configure nginx:
 
+    - sudo apt-get update
     - sudo apt-get install nginx
     - sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
     - sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
@@ -30,7 +23,7 @@ Create self signed certificate and configure nginx:
         ssl_stapling on;
         ssl_stapling_verify on;
         resolver 8.8.8.8 8.8.4.4 valid=300s;
-        resolver_timeout 5s;
+        resolver_timeout 20s;
         # Disable preloading HSTS for now.  You can use the commented out header line that includes
         # the "preload" directive if you understand the implications.
         #add_header Strict-Transport-Security "max-age=63072000; includeSubdomains; preload";
@@ -55,12 +48,28 @@ Create self signed certificate and configure nginx:
             listen [::]:443 ssl http2 default_server;
             include snippets/self-signed.conf;
             include snippets/ssl-params.conf;
+            location / {
+                proxy_pass http://127.0.0.1:5000;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto https;
+            }
         }
 
     - sudo ufw allow 'Nginx Full'
     - sudo ufw delete allow 'Nginx HTTP'
     - sudo ufw status
     - sudo nginx -t
+    - sudo systemctl restart nginx
+
+###################################################################
+
+Install .Net core 2.1.4:
+
+    - sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-xenial-prod xenial main" > /etc/apt/sources.list.d/dotnetdev.list'
+    - sudo apt-get update
+    - sudo apt-get install dotnet-sdk-2.1.4
 
 ###################################################################
 
@@ -82,7 +91,7 @@ Deploy API:
 
 Create service:
 
-    sudo vim /etc/systemd/system/kestrel-MeetMusic.service
+    sudo nano /etc/systemd/system/kestrel-MeetMusic.service
 
     [Unit]
     Description=MeetMusic
