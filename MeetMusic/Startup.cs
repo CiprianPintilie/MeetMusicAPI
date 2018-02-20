@@ -24,7 +24,7 @@ namespace MeetMusic
             //Add db context
             services.AddDbContext<MeetMusicDbContext>(options => 
             { 
-                options.UseMySQL(Configuration.GetConnectionString("DefaultConnection")); 
+                options.UseMySql(Configuration.GetConnectionString("DefaultConnection")); 
             });
 
             //----- Configuration du service pour le User -----//

@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace MeetMusic.Provider
 {
-    public class SQLLoggerProvider : ILoggerProvider
+    public class SqlLoggerProvider : ILoggerProvider
     {
         public ILogger CreateLogger(string categoryName)
         {
