@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Linq;
 using MeetMusic.Context;
 using MeetMusic.Interfaces;
 using MeetMusicModels.Models;
@@ -15,7 +15,7 @@ namespace MeetMusic.Services
 
         public User[] GetAllUsers()
         {
-            return _context.Users.Find();
+            return _context.Users.ToArray();
         }
     }
 }
