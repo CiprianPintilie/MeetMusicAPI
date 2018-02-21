@@ -1,4 +1,5 @@
 ﻿using MeetMusic.Interfaces;
+using MeetMusicModels.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,6 +25,26 @@ namespace MeetMusic.Controllers
         public IActionResult GetAllUsers()
         {
             return Ok(_userService.GetAllUsers());
+        }
+
+        [HttpGet(Name = nameof(GetUser))]
+        [Route("{id}")]
+        public IActionResult GetUser(string id)
+        {
+            return Ok(_userService.GetAllUsers());
+        }
+
+        /// <summary>
+        /// Get all users
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost]
+        public IActionResult CreateUser([FromBody]User userModel)
+        {
+            if (!ModelState.IsValid) return BadRequest();
+            _userService.CreateUser(userModel);
+            return Created("???" , nameof(GetUser));
         }
     }
 }
