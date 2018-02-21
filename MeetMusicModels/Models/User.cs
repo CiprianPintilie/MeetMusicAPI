@@ -9,8 +9,8 @@ namespace MeetMusicModels.Models
     {
         [Key]
         [Column("id")]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid Id { get; set; }
 
         [Column("username")]
         [Required(ErrorMessage = "required")]

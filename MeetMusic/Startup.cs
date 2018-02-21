@@ -1,11 +1,14 @@
-﻿using MeetMusic.Context;
+﻿using System.Text;
+using MeetMusic.Context;
 using MeetMusic.Interfaces;
 using MeetMusic.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 
 namespace MeetMusic
 {
@@ -22,16 +25,31 @@ namespace MeetMusic
         public void ConfigureServices(IServiceCollection services)
         {
             //Add db context
-            services.AddDbContext<MeetMusicDbContext>(options => 
-            { 
-                options.UseMySql(Configuration.GetConnectionString("DefaultConnection")); 
+            services.AddDbContext<MeetMusicDbContext>(options =>
+            {
+                options.UseMySql(Configuration.GetConnectionString("DefaultConnection"));
             });
 
-            //----- Configuration du service pour le User -----//
+            //Add services
             services.AddTransient<IUserService, UserService>();
 
-            services.AddMvc();
+            //Enable JWT authentification
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(jwtBearerOptions =>
+                {
+                    jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateActor = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = Configuration.GetSection("Token")["Issuer"],
+                        ValidAudience = Configuration.GetSection("Token")["Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetSection("Token")["SignatureKey"]))
+                    };
+                });
 
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,6 +59,8 @@ namespace MeetMusic
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseAuthentication();
 
             app.UseMvc();
         }
