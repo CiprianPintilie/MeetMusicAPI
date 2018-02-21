@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using MeetMusic.Context;
+using MeetMusic.ExceptionMiddleware;
 using MeetMusic.Interfaces;
 using MeetMusic.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -58,10 +59,14 @@ namespace MeetMusic
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseHttpStatusCodeExceptionMiddleware();
             }
-
+            else
+            {
+                app.UseHttpStatusCodeExceptionMiddleware();
+                app.UseExceptionHandler();
+            }
             app.UseAuthentication();
-
             app.UseMvc();
         }
     }
