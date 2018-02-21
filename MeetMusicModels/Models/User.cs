@@ -38,8 +38,7 @@ namespace MeetMusicModels.Models
         public string AvatarUrl { get; set; }
 
         [Column("phone")]
-        [DataType(DataType.PhoneNumber)]
-        public string Phone { get; set; }
+        public int Phone { get; set; }
 
         [Column("birth_date")]
         public DateTime BirthDate { get; set; }
