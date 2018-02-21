@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
 using MeetMusic.Context;
+using MeetMusic.ExceptionMiddleware;
 using MeetMusic.Interfaces;
 using MeetMusicModels.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace MeetMusic.Services
 {
@@ -19,17 +21,32 @@ namespace MeetMusic.Services
             return _context.Users.ToArray();
         }
 
-        public Guid AuthenticateUser(User userModel)
+        public Guid CreateUser(User userModel)
         {
             try
             {
-                var user = _context.Users.ToArray().Single(u => u.Username == userModel.Username);
-                return user.Id;
+                userModel.Id = Guid.NewGuid();
+                _context.Users.Add(userModel);
+                _context.SaveChanges();
+                return userModel.Id;
             }
-            catch (ArgumentNullException e)
+            catch (Exception e)
             {
                 Console.WriteLine(e);
                 throw;
+            }
+        }
+
+        public Guid AuthenticateUser(AuthModel authModel)
+        {
+            try
+            {
+                var user = _context.Users.ToArray().Single(u => u.Username == authModel.Username);
+                return user.Id;
+            }
+            catch (ArgumentNullException)
+            {
+                throw new HttpStatusCodeException(StatusCodes.Status401Unauthorized, "User not found");
             }
         }
     }

@@ -26,33 +26,29 @@ namespace MeetMusic.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("")]
-        public IActionResult Authenticate([FromBody]User loginViewModel)
+        public IActionResult Authenticate([FromBody]AuthModel loginViewModel)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return BadRequest();
+            var userId = _userService.AuthenticateUser(loginViewModel);
+
+            var claims = new[]
             {
-                //var userId = _userService.AuthenticateUser(loginViewModel);
+                new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
+                new Claim(JwtRegisteredClaimNames.UniqueName, loginViewModel.Username)
+            };
 
-                var claims = new[]
-                {
-                    //new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
-                    new Claim(JwtRegisteredClaimNames.UniqueName, loginViewModel.Username)
-                };
+            var token = new JwtSecurityToken
+            (
+                _configuration.GetSection("Token")["Issuer"],
+                _configuration.GetSection("Token")["Audience"],
+                claims,
+                expires: DateTime.UtcNow.AddDays(60),
+                notBefore: DateTime.UtcNow,
+                signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("Token")["SignatureKey"])),
+                    SecurityAlgorithms.HmacSha256)
+            );
 
-                var token = new JwtSecurityToken
-                (
-                    _configuration.GetSection("Token")["Issuer"],
-                    _configuration.GetSection("Token")["Audience"],
-                    claims,
-                    expires: DateTime.UtcNow.AddDays(60),
-                    notBefore: DateTime.UtcNow,
-                    signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("Token")["SignatureKey"])),
-                        SecurityAlgorithms.HmacSha256)
-                );
-
-                return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
-            }
-
-            return BadRequest();
+            return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
         }
     }
 }
