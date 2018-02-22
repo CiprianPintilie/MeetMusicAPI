@@ -108,6 +108,10 @@ namespace MeetMusic.Services
             {
                 throw new HttpStatusCodeException(StatusCodes.Status401Unauthorized, "User not found");
             }
+            catch (InvalidOperationException)
+            {
+                throw new HttpStatusCodeException(StatusCodes.Status401Unauthorized, "User not found");
+            }
             catch (Exception e)
             {
                 throw new HttpStatusCodeException(StatusCodes.Status500InternalServerError, e.Message);
