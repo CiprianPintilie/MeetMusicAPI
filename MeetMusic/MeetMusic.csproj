@@ -14,7 +14,6 @@
   <ItemGroup>
     <Folder Include="wwwroot\" />
     <Folder Include="Context\" />
-    <Folder Include="Services\" />
     <Folder Include="Provider\" />
   </ItemGroup>
 
