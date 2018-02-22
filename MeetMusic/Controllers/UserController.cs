@@ -61,6 +61,21 @@ namespace MeetMusic.Controllers
         }
 
         /// <summary>
+        /// Update user
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="userModel"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<IActionResult> CreateUser(Guid id, [FromBody]User userModel)
+        {
+            if (!ModelState.IsValid) return BadRequest("Invalid data in model");
+            var userId = await _userService.UpdateUser(id, userModel);
+            return Ok(userId);
+        }
+
+        /// <summary>
         /// Delete user by id
         /// </summary>
         /// <param name="id"></param>

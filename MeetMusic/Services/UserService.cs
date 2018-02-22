@@ -74,6 +74,28 @@ namespace MeetMusic.Services
             }
         }
 
+        public async Task<Guid> UpdateUser(Guid id, User userModel)
+        {
+            try
+            {
+                var user = await _context.Users.FindAsync(id);
+                if (user == null)
+                    throw new HttpStatusCodeException(StatusCodes.Status404NotFound,
+                        $"No user with the id '{id}' found");
+                _context.Users.Update(CopyUser(userModel, user));
+                await _context.SaveChangesAsync();
+                return user.Id;
+            }
+            catch (HttpStatusCodeException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                throw new HttpStatusCodeException(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
         public async Task DeleteUser(Guid id)
         {
             try
@@ -120,6 +142,19 @@ namespace MeetMusic.Services
             {
                 throw new HttpStatusCodeException(StatusCodes.Status500InternalServerError, e.Message);
             }
+        }
+
+        private User CopyUser(User sourceUser, User destUser)
+        {
+            destUser.AvatarUrl = sourceUser.AvatarUrl;
+            destUser.BirthDate = sourceUser.BirthDate;
+            destUser.Description = sourceUser.Description;
+            destUser.Email = sourceUser.Email;
+            destUser.Gender = sourceUser.Gender;
+            destUser.Latitude = sourceUser.Longitude;
+            destUser.Longitude = sourceUser.Longitude;
+            destUser.Phone = sourceUser.Phone;
+            return destUser;
         }
     }
 }

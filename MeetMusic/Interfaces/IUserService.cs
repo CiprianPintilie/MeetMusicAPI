@@ -9,6 +9,7 @@ namespace MeetMusic.Interfaces
         Task<User[]> GetAllUsers();
         Task<User> GetUser(Guid id);
         Task<Guid> CreateUser(User userModel);
+        Task<Guid> UpdateUser(Guid id, User userModel);
         Task DeleteUser(Guid id);
         Task<Guid> AuthenticateUser(AuthModel authModel);
     }
