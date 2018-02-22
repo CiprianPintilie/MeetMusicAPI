@@ -49,6 +49,7 @@ namespace MeetMusic.Controllers
         /// </summary>
         /// <param name="userModel"></param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpPost]
         [Route("")]
         public IActionResult CreateUser([FromBody]User userModel)
