@@ -6,6 +6,7 @@ using MeetMusic.Interfaces;
 using MeetMusicModels.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Utils.Hash;
 
 namespace MeetMusic.Services
 {
@@ -55,6 +56,7 @@ namespace MeetMusic.Services
             try
             {
                 userModel.Id = Guid.NewGuid();
+                userModel.Password = PasswordTool.HashPassword(userModel.Password);
                 _context.Users.Add(userModel);
                 _context.SaveChanges();
                 return userModel.Id;
@@ -96,7 +98,7 @@ namespace MeetMusic.Services
             try
             {
                 var user = _context.Users.ToArray().Single(u => u.Username == authModel.Username);
-                if (authModel.Password != user.Password)
+                if (!PasswordTool.ValidatePassword(authModel.Password, user.Password))
                     throw new HttpStatusCodeException(StatusCodes.Status401Unauthorized, "Invalid password");
                 return user.Id;
             }
