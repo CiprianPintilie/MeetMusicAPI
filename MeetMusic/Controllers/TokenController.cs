@@ -2,6 +2,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 using MeetMusic.Interfaces;
 using MeetMusicModels.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -26,10 +27,10 @@ namespace MeetMusic.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("")]
-        public IActionResult Authenticate([FromBody]AuthModel loginViewModel)
+        public async Task<IActionResult> Authenticate([FromBody]AuthModel loginViewModel)
         {
             if (!ModelState.IsValid) return BadRequest();
-            var userId = _userService.AuthenticateUser(loginViewModel);
+            var userId = await _userService.AuthenticateUser(loginViewModel);
 
             var claims = new[]
             {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using MeetMusic.Context;
 using MeetMusic.ExceptionMiddleware;
 using MeetMusic.Interfaces;
@@ -19,11 +20,11 @@ namespace MeetMusic.Services
             _context = context;
         }
 
-        public User[] GetAllUsers()
+        public async Task<User[]> GetAllUsers()
         {
             try
             {
-                return _context.Users.ToArray();
+                return await _context.Users.ToArrayAsync();
             }
             catch (Exception e)
             {
@@ -31,11 +32,11 @@ namespace MeetMusic.Services
             }
         }
 
-        public User GetUser(Guid id)
+        public async Task<User> GetUser(Guid id)
         {
             try
             {
-                var user = _context.Users.Find(id);
+                var user = await _context.Users.FindAsync(id);
                 if (user == null)
                     throw new HttpStatusCodeException(StatusCodes.Status404NotFound,
                         $"No user with the id '{id}' found");
@@ -51,14 +52,14 @@ namespace MeetMusic.Services
             }
         }
 
-        public Guid CreateUser(User userModel)
+        public async Task<Guid> CreateUser(User userModel)
         {
             try
             {
                 userModel.Id = Guid.NewGuid();
                 userModel.Password = PasswordTool.HashPassword(userModel.Password);
-                _context.Users.Add(userModel);
-                _context.SaveChanges();
+                await _context.Users.AddAsync(userModel);
+                await _context.SaveChangesAsync();
                 return userModel.Id;
             }
             catch (DbUpdateException e)
@@ -73,7 +74,7 @@ namespace MeetMusic.Services
             }
         }
 
-        public void DeleteUser(Guid id)
+        public async Task DeleteUser(Guid id)
         {
             try
             {
@@ -81,7 +82,7 @@ namespace MeetMusic.Services
                 if (user == null)
                     throw new HttpStatusCodeException(StatusCodes.Status404NotFound, $"No user with the id '{id}' found");
                 _context.Remove(user);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
             catch (HttpStatusCodeException)
             {
@@ -93,11 +94,12 @@ namespace MeetMusic.Services
             }
         }
 
-        public Guid AuthenticateUser(AuthModel authModel)
+        public async Task<Guid> AuthenticateUser(AuthModel authModel)
         {
             try
             {
-                var user = _context.Users.ToArray().Single(u => u.Username == authModel.Username);
+                var users = await _context.Users.ToArrayAsync();
+                var user = users.Single(u => u.Username == authModel.Username);
                 if (!PasswordTool.ValidatePassword(authModel.Password, user.Password))
                     throw new HttpStatusCodeException(StatusCodes.Status401Unauthorized, "Invalid password");
                 return user.Id;

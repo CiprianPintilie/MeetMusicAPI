@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using MeetMusic.Interfaces;
 using MeetMusicModels.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -27,9 +28,9 @@ namespace MeetMusic.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("")]
-        public IActionResult GetAllUsers()
+        public async Task<IActionResult> GetAllUsers()
         {
-            return Ok(_userService.GetAllUsers());
+            return Ok(await _userService.GetAllUsers());
         }
 
         /// <summary>
@@ -39,9 +40,9 @@ namespace MeetMusic.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("{id}")]
-        public IActionResult GetUser(Guid id)
+        public async Task<IActionResult> GetUser(Guid id)
         {
-            return Ok(_userService.GetUser(id));
+            return Ok(await _userService.GetUser(id));
         }
 
         /// <summary>
@@ -52,10 +53,10 @@ namespace MeetMusic.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("")]
-        public IActionResult CreateUser([FromBody]User userModel)
+        public async Task<IActionResult> CreateUser([FromBody]User userModel)
         {
             if (!ModelState.IsValid) return BadRequest("Invalid data in model");
-            var userId = _userService.CreateUser(userModel);
+            var userId = await _userService.CreateUser(userModel);
             return Created($"{_apiUrl}/user/{userId.ToString()}", userId);
         }
 
@@ -66,10 +67,10 @@ namespace MeetMusic.Controllers
         /// <returns></returns>
         [HttpDelete]
         [Route("{id}")]
-        public IActionResult DeleteUser(Guid id)
+        public async Task<IActionResult> DeleteUser(Guid id)
         {
             if (!ModelState.IsValid) return BadRequest("Invalid data in model");
-            _userService.DeleteUser(id);
+            await _userService.DeleteUser(id);
             return NoContent();
         }
     }
