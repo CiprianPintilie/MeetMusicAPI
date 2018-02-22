@@ -1,50 +1,76 @@
-﻿using MeetMusic.Interfaces;
+﻿using System;
+using MeetMusic.Interfaces;
+using MeetMusicModels.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.Extensions.Configuration;
 
 namespace MeetMusic.Controllers
 {
+    [Authorize]
+    [Produces("application/json")]
     [Route("api/[controller]")]
     public class UserController : Controller
     {
         private readonly IUserService _userService;
+        private readonly string _apiUrl;
 
-        public UserController(IUserService userService)
+        public UserController(IConfiguration configuration, IUserService userService)
         {
             _userService = userService;
+            _apiUrl = configuration.GetSection("ApiInfo")["ApiUrl"];
         }
 
-        // GET: api/values
+        /// <summary>
+        /// Get all users
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
+        [Route("")]
         public IActionResult GetAllUsers()
         {
             return Ok(_userService.GetAllUsers());
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        /// <summary>
+        /// Get user by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{id}")]
+        public IActionResult GetUser(Guid id)
         {
-            return "value";
+            return Ok(_userService.GetUser(id));
         }
 
-        // POST api/values
+        /// <summary>
+        /// Create a new user
+        /// </summary>
+        /// <param name="userModel"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
         [HttpPost]
-        public void Post([FromBody]string value)
+        [Route("")]
+        public IActionResult CreateUser([FromBody]User userModel)
         {
+            if (!ModelState.IsValid) return BadRequest("Invalid data in model");
+            var userId = _userService.CreateUser(userModel);
+            return Created($"{_apiUrl}/user/{userId.ToString()}", userId);
         }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        /// <summary>
+        /// Delete user by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("{id}")]
+        public IActionResult DeleteUser(Guid id)
         {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            if (!ModelState.IsValid) return BadRequest("Invalid data in model");
+            _userService.DeleteUser(id);
+            return NoContent();
         }
     }
 }

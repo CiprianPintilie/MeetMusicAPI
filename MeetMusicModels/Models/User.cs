@@ -9,8 +9,8 @@ namespace MeetMusicModels.Models
     {
         [Key]
         [Column("id")]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid Id { get; set; }
 
         [Column("username")]
         [Required(ErrorMessage = "required")]
@@ -27,14 +27,24 @@ namespace MeetMusicModels.Models
         [Column("mail")]
         [DataType(DataType.EmailAddress)]
         [Required(ErrorMessage = "required")]
-        [RegularExpression(@"^([a-zA-Z0-9_-.]+)@(([[0-9]{1,3}" +
-                           @".[0-9]{1,3}.[0-9]{1,3}.)|(([a-zA-Z0-9-]+" +
-                           @".)+))([a-zA-Z]{2,4}|[0-9]{1,3})(]?)$",
+        [RegularExpression(@"^[a-zA-Z0-9.!#$%&’*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$",
             ErrorMessage = "Not a mail adress")]
         public string Email { get; set; }
 
+        [Column("gender")]
+        public int Gender { get; set; }
+
+        [Column("avatar_url")]
+        public string AvatarUrl { get; set; }
+
+        [Column("phone")]
+        public int Phone { get; set; }
+
         [Column("birth_date")]
         public DateTime BirthDate { get; set; }
+
+        [Column("description")]
+        public string Description { get; set; }
 
         [Column("longitude")]
         public string Longitude { get; set; }
