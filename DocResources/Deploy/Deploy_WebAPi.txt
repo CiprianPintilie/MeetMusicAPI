@@ -4,7 +4,7 @@ Create self signed certificate and configure nginx:
 
     - sudo apt-get update
     - sudo apt-get install nginx
-    - sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
+    - sudo openssl req -x509 -nodes -sha256 -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
     - sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
     - sudo nano /etc/nginx/snippets/self-signed.conf
         ssl_certificate /etc/ssl/certs/nginx-selfsigned.crt;
