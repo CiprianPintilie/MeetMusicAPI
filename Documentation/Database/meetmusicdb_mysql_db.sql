@@ -40,7 +40,7 @@ CREATE TABLE `message` (
 CREATE TABLE `music_user` (
   `id_user` int(255) NOT NULL,
   `family_id` int(2) NOT NULL
-  `coefficient` float(3) NOT NULL
+  `coefficient` float(2,2) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -108,10 +108,10 @@ ALTER TABLE `message`
   MODIFY `message_id` int(255) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `music_user`
-  FOREIGN KEY (id_user) REFERENCES user(id);
+  FOREIGN KEY (`id_user`) REFERENCES user(`id`);
 
 ALTER TABLE `music_user`
-  FOREIGN KEY (family_id) REFERENCES music_family(family_id);
+  FOREIGN KEY (`family_id`) REFERENCES music_family(`family_id`);
 
 ALTER TABLE `music_user`
-  ADD CONSTRAINT PK_UserMusic PRIMARY KEY (id_user,family_id);
+  ADD CONSTRAINT PK_UserMusic PRIMARY KEY (`id_user,family_id`);
