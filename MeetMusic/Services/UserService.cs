@@ -146,14 +146,17 @@ namespace MeetMusic.Services
 
         private User CopyUser(User sourceUser, User destUser)
         {
-            destUser.AvatarUrl = sourceUser.AvatarUrl;
-            destUser.BirthDate = sourceUser.BirthDate;
-            destUser.Description = sourceUser.Description;
+            destUser.FirstName = sourceUser.FirstName;
+            destUser.LastName = sourceUser.LastName;
             destUser.Email = sourceUser.Email;
             destUser.Gender = sourceUser.Gender;
+            destUser.AvatarUrl = sourceUser.AvatarUrl;
+            destUser.Phone = sourceUser.Phone;
+            destUser.BirthDate = sourceUser.BirthDate;
+            destUser.Description = sourceUser.Description;
             destUser.Latitude = sourceUser.Longitude;
             destUser.Longitude = sourceUser.Longitude;
-            destUser.Phone = sourceUser.Phone;
+            
             return destUser;
         }
     }

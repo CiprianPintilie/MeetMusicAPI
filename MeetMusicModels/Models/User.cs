@@ -24,23 +24,38 @@ namespace MeetMusicModels.Models
         [StringLength(10, MinimumLength = 6, ErrorMessage = "Password must contains between {2} & {1} characters.")]
         public string Password { get; set; }
 
+        [Column("firstname")]
+        [Required(ErrorMessage = "required")]
+        [RegularExpression(@"^[a-zA-Z]{2,40}$",
+            ErrorMessage = "Firstname must be at least 2 characters and not exceed 40 characters")]
+        public string FirstName { get; set; }
+
+        [Column("lastname")]
+        [Required(ErrorMessage = "required")]
+        [RegularExpression(@"^[a-zA-Z]{2,40}$",
+            ErrorMessage = "Lastname must be at least 2 characters and not exceed 40 characters")]
+        public string LastName { get; set; }
+
         [Column("mail")]
         [DataType(DataType.EmailAddress)]
         [Required(ErrorMessage = "required")]
         [RegularExpression(@"^[a-zA-Z0-9.!#$%&’*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$",
             ErrorMessage = "Not a mail adress")]
         public string Email { get; set; }
-
+        
         [Column("gender")]
+        [Required(ErrorMessage = "required")]
+        [RegularExpression(@"^[1-2]$", ErrorMessage = "Gender must be an integer between 1 and 2")]
         public int Gender { get; set; }
 
         [Column("avatar_url")]
         public string AvatarUrl { get; set; }
 
         [Column("phone")]
-        public int Phone { get; set; }
+        public string Phone { get; set; }
 
         [Column("birth_date")]
+        [DataType(DataType.DateTime)]
         public DateTime BirthDate { get; set; }
 
         [Column("description")]
