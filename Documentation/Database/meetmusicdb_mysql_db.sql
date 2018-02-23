@@ -66,26 +66,16 @@ CREATE TABLE `user` (
   `username` varchar(20) NOT NULL,
   `password` varchar(255) NOT NULL,
   `firstname` varchar(40) NOT NULL,
+  `lastname` varchar(40) NOT NULL,
   `mail` varchar(255) NOT NULL,
   `gender` int(1) NOT NULL,
   `avatar_url` varchar(255) DEFAULT NULL,
-  `phone` varchar(10) DEFAULT NULL,
+  `phone` varchar(16) DEFAULT NULL,
   `birth_date` date NOT NULL,
   `description` mediumtext,
   `longitude` varchar(255) NOT NULL,
   `latitude` varchar(255) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
---
--- Déchargement des données de la table `m_utilisateur`
---
-
-INSERT INTO `user` (`id`, `username`, `password`, `firstname`, `mail`, `gender`, `avatar_url`, `phone`, `birth_date`, `description`, `longitude`, `latitude`) VALUES
-(1, 'ciprianleroxor', 'toto','Ciprian', 'ciprian@bukkake.com', 1, NULL, NULL, '1993-02-28', NULL, '1x', '2y');
-
---
--- Index pour les tables déchargées
---
 
 --
 -- Index pour la table `m_messagerie`
@@ -105,7 +95,7 @@ ALTER TABLE `music_family`
 ALTER TABLE `user`
   ADD PRIMARY KEY (`id`) KEY_BLOCK_SIZE=1024;
 
-  ALTER TABLE `user`
+ALTER TABLE `user`
   ADD UNIQUE (`username`) KEY_BLOCK_SIZE=1024;
 --
 -- AUTO_INCREMENT pour les tables déchargées
@@ -117,3 +107,11 @@ ALTER TABLE `user`
 ALTER TABLE `message`
   MODIFY `message_id` int(255) NOT NULL AUTO_INCREMENT;
 
+ALTER TABLE `music_user`
+  FOREIGN KEY (id_user) REFERENCES user(id);
+
+ALTER TABLE `music_user`
+  FOREIGN KEY (family_id) REFERENCES music_family(family_id);
+
+ALTER TABLE `music_user`
+  ADD CONSTRAINT PK_UserMusic PRIMARY KEY (id_user,family_id);
