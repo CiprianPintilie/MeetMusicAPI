@@ -114,4 +114,4 @@ ALTER TABLE `music_user`
   ADD FOREIGN KEY (`family_id`) REFERENCES music_family(`family_id`);
 
 ALTER TABLE `music_user`
-  ADD CONSTRAINT PK_UserMusic PRIMARY KEY (`id_user,family_id`);
+  ADD CONSTRAINT PK_UserMusic PRIMARY KEY (`id_user`,`family_id`);
