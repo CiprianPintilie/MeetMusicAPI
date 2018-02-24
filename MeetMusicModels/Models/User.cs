@@ -21,7 +21,7 @@ namespace MeetMusicModels.Models
         [Column("password")]
         [DataType(DataType.Password)]
         [Required(ErrorMessage = "required")]
-        [StringLength(10, MinimumLength = 6, ErrorMessage = "Password must contains between {2} & {1} characters.")]
+        [StringLength(32, MinimumLength = 6, ErrorMessage = "Password must contains between {2} & {1} characters.")]
         public string Password { get; set; }
 
         [Column("firstname")]
