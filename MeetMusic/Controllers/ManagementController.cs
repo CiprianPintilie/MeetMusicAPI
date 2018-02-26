@@ -1,4 +1,6 @@
-﻿using MeetMusic.Interfaces;
+﻿using System.Threading.Tasks;
+using MeetMusic.Interfaces;
+using MeetMusicModels.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MeetMusic.Controllers
@@ -12,6 +14,14 @@ namespace MeetMusic.Controllers
         public ManagementController(IManagementService managementService)
         {
             _managementService = managementService;
+        }
+
+        [HttpPut]
+        [Route("")]
+        public async Task<IActionResult> UpdateFamilies([FromBody] MusicFamilyUpdateModel[] model)
+        {
+            await _managementService.UpdateFamilies(model);
+            return Ok();
         }
     }
 }
