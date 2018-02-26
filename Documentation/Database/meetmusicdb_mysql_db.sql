@@ -1,12 +1,3 @@
--- phpMyAdmin SQL Dump
--- version 4.7.3
--- https://www.phpmyadmin.net/
---
--- Hôte : sylrusfrnrmeetmu.mysql.db
--- Généré le :  mer. 21 fév. 2018 à 09:29
--- Version du serveur :  5.5.55-0+deb7u1-log
--- Version de PHP :  5.6.33-0+deb8u1
-
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
 START TRANSACTION;
@@ -38,7 +29,7 @@ CREATE TABLE `message` (
 --
 
 CREATE TABLE `music_user` (
-  `id_user` int(255) NOT NULL,
+  `user_id` int(255) NOT NULL,
   `family_id` int(2) NOT NULL,
   `coefficient` float(2,2) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -51,8 +42,29 @@ CREATE TABLE `music_user` (
 
 CREATE TABLE `music_family` (
   `family_id` int(2) NOT NULL,
-  `kind` varchar(255) NOT NULL,
-  `family` varchar(255) NOT NULL
+  `name` varchar(255) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table music_genre
+--
+
+CREATE TABLE `music_genre` (
+  `genre_id` int(2) NOT NULL,
+  `name` varchar(255) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table family_genre
+--
+
+CREATE TABLE `family_genre` (
+  `family_id` int(2) NOT NULL,
+  `genre_id` int(2) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -62,7 +74,7 @@ CREATE TABLE `music_family` (
 --
 
 CREATE TABLE `user` (
-  `id` varchar(36) NOT NULL,
+  `user_id` varchar(36) NOT NULL,
   `username` varchar(20) NOT NULL,
   `password` varchar(255) NOT NULL,
   `firstname` varchar(40) NOT NULL,
@@ -78,40 +90,71 @@ CREATE TABLE `user` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
--- Index pour la table `m_messagerie`
+-- TABLE CONSTRAINTS
 --
+
+-- message
+
 ALTER TABLE `message`
   ADD PRIMARY KEY (`message_id`);
 
---
--- Index pour la table `m_musique`
---
-ALTER TABLE `music_family`
-  ADD PRIMARY KEY (`family_id`);
-
---
--- Index pour la table `m_utilisateur`
---
-ALTER TABLE `user`
-  ADD PRIMARY KEY (`id`) KEY_BLOCK_SIZE=1024;
-
-ALTER TABLE `user`
-  ADD UNIQUE (`username`) KEY_BLOCK_SIZE=1024;
---
--- AUTO_INCREMENT pour les tables déchargées
---
-
---
--- AUTO_INCREMENT pour la table `m_messagerie`
---
 ALTER TABLE `message`
   MODIFY `message_id` int(255) NOT NULL AUTO_INCREMENT;
 
+-- --------------------------------------------------------
+
+-- music_family
+
+ALTER TABLE `music_family`
+  ADD PRIMARY KEY (`family_id`);
+
+ALTER TABLE `music_family`
+  MODIFY `family_id` int(255) NOT NULL AUTO_INCREMENT;
+
+-- --------------------------------------------------------
+
+-- music_genre
+
+ALTER TABLE `music_genre`
+  ADD PRIMARY KEY (`genre_id`);
+
+ALTER TABLE `music_genre`
+  MODIFY `genre_id` int(255) NOT NULL AUTO_INCREMENT;
+
+-- --------------------------------------------------------
+
+-- family_genre
+
+ALTER TABLE `family_genre`
+  ADD FOREIGN KEY (`family_id`) REFERENCES music_family(`family_id`);
+
+ALTER TABLE `family_genre`
+  ADD FOREIGN KEY (`genre_id`) REFERENCES music_genre(`genre_id`);
+
+ALTER TABLE `family_genre`
+  ADD CONSTRAINT PK_FamilyGenre PRIMARY KEY (`family_id`,`genre_id`);
+
+-- --------------------------------------------------------
+
+-- user
+
+ALTER TABLE `user`
+  ADD PRIMARY KEY (`user_id`) KEY_BLOCK_SIZE=1024;
+
+ALTER TABLE `user`
+  ADD UNIQUE (`username`) KEY_BLOCK_SIZE=1024;
+
+-- --------------------------------------------------------
+
+-- music_user
+
 ALTER TABLE `music_user`
-  ADD FOREIGN KEY (`id_user`) REFERENCES user(`id`);
+  ADD FOREIGN KEY (`user_id`) REFERENCES user(`user_id`);
 
 ALTER TABLE `music_user`
   ADD FOREIGN KEY (`family_id`) REFERENCES music_family(`family_id`);
 
 ALTER TABLE `music_user`
-  ADD CONSTRAINT PK_UserMusic PRIMARY KEY (`id_user`,`family_id`);
+  ADD CONSTRAINT PK_UserMusic PRIMARY KEY (`user_id`,`family_id`);
+
+-- --------------------------------------------------------
