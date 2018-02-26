@@ -33,6 +33,7 @@ namespace MeetMusic
 
             //Add services
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IManagementService, ManagementService>();
 
             //Enable JWT authentification
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
