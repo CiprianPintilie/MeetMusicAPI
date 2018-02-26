@@ -99,6 +99,9 @@ ALTER TABLE `music_family`
   ADD PRIMARY KEY (`family_id`);
 
 ALTER TABLE `music_family`
+  ADD UNIQUE (`name`) KEY_BLOCK_SIZE=1024;
+
+ALTER TABLE `music_family`
   MODIFY `family_id` int(255) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
@@ -107,6 +110,9 @@ ALTER TABLE `music_family`
 
 ALTER TABLE `music_genre`
   ADD PRIMARY KEY (`genre_id`);
+
+ALTER TABLE `music_genre`
+  ADD UNIQUE (`name`) KEY_BLOCK_SIZE=1024;
 
 ALTER TABLE `music_genre`
   MODIFY `genre_id` int(255) NOT NULL AUTO_INCREMENT;
