@@ -13,7 +13,5 @@ namespace MeetMusic.Controllers
         {
             _managementService = managementService;
         }
-
-
     }
 }
