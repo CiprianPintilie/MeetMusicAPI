@@ -1,13 +1,14 @@
-﻿namespace MeetMusicModels.Models
+﻿using Newtonsoft.Json;
+
+namespace MeetMusicModels.Models
 {
     public class SpotifyArtistModel
     {
-        public string Id { get; set; }
+        [JsonProperty("genres")]
         public string[] Genres { get; set; }
-        public string Name { get; set; }
-        public int Popularity { get; set; }
-        public string Uri { get; set; }
     }
+
+    //TODO: Discuter avec la team de quels moyens de match on emploie exactement pour savoir comment on calcule les %fam
 
     //[ {
     //    "external_urls" : {

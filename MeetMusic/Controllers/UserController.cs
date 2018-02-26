@@ -75,6 +75,17 @@ namespace MeetMusic.Controllers
             return Ok(userId);
         }
 
+
+        /// <summary>
+        /// Updates given user tastes using the given model
+        /// </summary>
+        [HttpPut]
+        [Route("{id}/tastes")]
+        public async Task<IActionResult> UpdateUserTastes([FromBody] SpotifyArtistModel model)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Delete user by id
         /// </summary>
