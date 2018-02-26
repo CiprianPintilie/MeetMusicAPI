@@ -1,10 +1,12 @@
 ﻿using System.Threading.Tasks;
 using MeetMusic.Interfaces;
 using MeetMusicModels.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MeetMusic.Controllers
 {
+    [Authorize]
     [Produces("application/json")]
     [Route("api/[controller]")]
     public class ManagementController : Controller
