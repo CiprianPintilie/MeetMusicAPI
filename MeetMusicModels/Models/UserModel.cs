@@ -8,7 +8,7 @@ namespace MeetMusicModels.Models
     public class UserModel
     {
         [Key]
-        [Column("id")]
+        [Column("user_id")]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid Id { get; set; }
 
