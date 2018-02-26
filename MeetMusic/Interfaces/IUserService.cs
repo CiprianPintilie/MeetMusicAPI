@@ -6,10 +6,10 @@ namespace MeetMusic.Interfaces
 {
     public interface IUserService
     {
-        Task<User[]> GetAllUsers();
-        Task<User> GetUser(Guid id);
-        Task<Guid> CreateUser(User userModel);
-        Task<Guid> UpdateUser(Guid id, User userModel);
+        Task<UserModel[]> GetAllUsers();
+        Task<UserModel> GetUser(Guid id);
+        Task<Guid> CreateUser(UserModel userModelModel);
+        Task<Guid> UpdateUser(Guid id, UserModel userModelModel);
         Task DeleteUser(Guid id);
         Task<Guid> AuthenticateUser(AuthModel authModel);
     }

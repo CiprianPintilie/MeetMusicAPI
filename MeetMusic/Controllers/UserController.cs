@@ -48,15 +48,15 @@ namespace MeetMusic.Controllers
         /// <summary>
         /// Create a new user
         /// </summary>
-        /// <param name="userModel"></param>
+        /// <param name="userModelModel"></param>
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost]
         [Route("")]
-        public async Task<IActionResult> CreateUser([FromBody]User userModel)
+        public async Task<IActionResult> CreateUser([FromBody]UserModel userModelModel)
         {
             if (!ModelState.IsValid) return BadRequest("Invalid data in model");
-            var userId = await _userService.CreateUser(userModel);
+            var userId = await _userService.CreateUser(userModelModel);
             return Created($"{_apiUrl}/user/{userId.ToString()}", userId);
         }
 
@@ -64,14 +64,14 @@ namespace MeetMusic.Controllers
         /// Update user
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="userModel"></param>
+        /// <param name="userModelModel"></param>
         /// <returns></returns>
         [HttpPut]
         [Route("{id}")]
-        public async Task<IActionResult> CreateUser(Guid id, [FromBody]User userModel)
+        public async Task<IActionResult> CreateUser(Guid id, [FromBody]UserModel userModelModel)
         {
             if (!ModelState.IsValid) return BadRequest("Invalid data in model");
-            var userId = await _userService.UpdateUser(id, userModel);
+            var userId = await _userService.UpdateUser(id, userModelModel);
             return Ok(userId);
         }
 

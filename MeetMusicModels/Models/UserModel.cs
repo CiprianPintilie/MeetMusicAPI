@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace MeetMusicModels.Models
 {
     [Table("user")]
-    public class User
+    public class UserModel
     {
         [Key]
         [Column("id")]

@@ -20,7 +20,7 @@ namespace MeetMusic.Services
             _context = context;
         }
 
-        public async Task<User[]> GetAllUsers()
+        public async Task<UserModel[]> GetAllUsers()
         {
             try
             {
@@ -32,7 +32,7 @@ namespace MeetMusic.Services
             }
         }
 
-        public async Task<User> GetUser(Guid id)
+        public async Task<UserModel> GetUser(Guid id)
         {
             try
             {
@@ -52,15 +52,15 @@ namespace MeetMusic.Services
             }
         }
 
-        public async Task<Guid> CreateUser(User userModel)
+        public async Task<Guid> CreateUser(UserModel userModelModel)
         {
             try
             {
-                userModel.Id = Guid.NewGuid();
-                userModel.Password = PasswordTool.HashPassword(userModel.Password);
-                await _context.Users.AddAsync(userModel);
+                userModelModel.Id = Guid.NewGuid();
+                userModelModel.Password = PasswordTool.HashPassword(userModelModel.Password);
+                await _context.Users.AddAsync(userModelModel);
                 await _context.SaveChangesAsync();
-                return userModel.Id;
+                return userModelModel.Id;
             }
             catch (DbUpdateException e)
             {
@@ -74,7 +74,7 @@ namespace MeetMusic.Services
             }
         }
 
-        public async Task<Guid> UpdateUser(Guid id, User userModel)
+        public async Task<Guid> UpdateUser(Guid id, UserModel userModelModel)
         {
             try
             {
@@ -82,7 +82,7 @@ namespace MeetMusic.Services
                 if (user == null)
                     throw new HttpStatusCodeException(StatusCodes.Status404NotFound,
                         $"No user with the id '{id}' found");
-                _context.Users.Update(CopyUser(userModel, user));
+                _context.Users.Update(CopyUser(userModelModel, user));
                 await _context.SaveChangesAsync();
                 return user.Id;
             }
@@ -144,20 +144,20 @@ namespace MeetMusic.Services
             }
         }
 
-        private User CopyUser(User sourceUser, User destUser)
+        private UserModel CopyUser(UserModel sourceUserModel, UserModel destUserModel)
         {
-            destUser.FirstName = sourceUser.FirstName;
-            destUser.LastName = sourceUser.LastName;
-            destUser.Email = sourceUser.Email;
-            destUser.Gender = sourceUser.Gender;
-            destUser.AvatarUrl = sourceUser.AvatarUrl;
-            destUser.Phone = sourceUser.Phone;
-            destUser.BirthDate = sourceUser.BirthDate;
-            destUser.Description = sourceUser.Description;
-            destUser.Latitude = sourceUser.Longitude;
-            destUser.Longitude = sourceUser.Longitude;
+            destUserModel.FirstName = sourceUserModel.FirstName;
+            destUserModel.LastName = sourceUserModel.LastName;
+            destUserModel.Email = sourceUserModel.Email;
+            destUserModel.Gender = sourceUserModel.Gender;
+            destUserModel.AvatarUrl = sourceUserModel.AvatarUrl;
+            destUserModel.Phone = sourceUserModel.Phone;
+            destUserModel.BirthDate = sourceUserModel.BirthDate;
+            destUserModel.Description = sourceUserModel.Description;
+            destUserModel.Latitude = sourceUserModel.Longitude;
+            destUserModel.Longitude = sourceUserModel.Longitude;
             
-            return destUser;
+            return destUserModel;
         }
     }
 }
