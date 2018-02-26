@@ -9,6 +9,6 @@ namespace MeetMusicModels.Models
         [JsonProperty("genre")]
         public string GenreName { get; set; }
         [JsonProperty("family")]
-        public string GenreFamily { get; set; }
+        public string FamilyName { get; set; }
     }
 }

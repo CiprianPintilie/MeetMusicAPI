@@ -16,8 +16,13 @@ namespace MeetMusic.Controllers
             _managementService = managementService;
         }
 
+        /// <summary>
+        /// Updates music families, genres, and genre/family association, based on the given JSON model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPut]
-        [Route("")]
+        [Route("families")]
         public async Task<IActionResult> UpdateFamilies([FromBody] MusicFamilyUpdateModel[] model)
         {
             await _managementService.UpdateFamilies(model);
