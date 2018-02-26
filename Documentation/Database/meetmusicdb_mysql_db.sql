@@ -30,7 +30,7 @@ CREATE TABLE `message` (
 
 CREATE TABLE `music_user` (
   `user_id` int(255) NOT NULL,
-  `family_id` int(2) NOT NULL,
+  `family_id` int(255) NOT NULL,
   `coefficient` float(2,2) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -41,7 +41,7 @@ CREATE TABLE `music_user` (
 --
 
 CREATE TABLE `music_family` (
-  `family_id` int(2) NOT NULL,
+  `family_id` int(255) NOT NULL,
   `name` varchar(255) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -52,19 +52,9 @@ CREATE TABLE `music_family` (
 --
 
 CREATE TABLE `music_genre` (
-  `genre_id` int(2) NOT NULL,
+  `genre_id` int(255) NOT NULL,
+  `family_id` int(255) NOT NULL,
   `name` varchar(255) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- Table family_genre
---
-
-CREATE TABLE `family_genre` (
-  `family_id` int(2) NOT NULL,
-  `genre_id` int(2) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -121,18 +111,8 @@ ALTER TABLE `music_genre`
 ALTER TABLE `music_genre`
   MODIFY `genre_id` int(255) NOT NULL AUTO_INCREMENT;
 
--- --------------------------------------------------------
-
--- family_genre
-
-ALTER TABLE `family_genre`
+ALTER TABLE `music_genre`
   ADD FOREIGN KEY (`family_id`) REFERENCES music_family(`family_id`);
-
-ALTER TABLE `family_genre`
-  ADD FOREIGN KEY (`genre_id`) REFERENCES music_genre(`genre_id`);
-
-ALTER TABLE `family_genre`
-  ADD CONSTRAINT PK_FamilyGenre PRIMARY KEY (`family_id`,`genre_id`);
 
 -- --------------------------------------------------------
 

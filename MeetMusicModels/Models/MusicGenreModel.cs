@@ -2,11 +2,14 @@
 
 namespace MeetMusicModels.Models
 {
-    [Table("music_family")]
-    public class MusicFamilyModel
+    [Table("music_genre")]
+    public class MusicGenreModel
     {
-        [Column("family_id")]
+        [Column("genre_id")]
         public int Id { get; set; }
+
+        [Column("family_id")]
+        public int FamilyId { get; set; }
 
         [Column("name")]
         public string Name { get; set; }
