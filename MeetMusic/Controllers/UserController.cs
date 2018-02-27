@@ -46,6 +46,18 @@ namespace MeetMusic.Controllers
         }
 
         /// <summary>
+        /// Get top user music tastes
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{id}/tastes")]
+        public async Task<IActionResult> GetUserTastes(Guid id)
+        {
+            return Ok(await _userService.GetUserTastes(id));
+        }
+
+        /// <summary>
         /// Create a new user
         /// </summary>
         /// <param name="userModelModel"></param>
@@ -81,9 +93,10 @@ namespace MeetMusic.Controllers
         /// </summary>
         [HttpPut]
         [Route("{id}/tastes")]
-        public async Task<IActionResult> UpdateUserTastes([FromBody] SpotifyArtistModel model)
+        public async Task<IActionResult> UpdateUserTastes(Guid userId, [FromBody] UserMusicModel[] models)
         {
-            throw new NotImplementedException();
+            await _userService.UpdateUserTastes(userId, models);
+            return Ok();
         }
 
         /// <summary>

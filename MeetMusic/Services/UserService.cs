@@ -52,6 +52,19 @@ namespace MeetMusic.Services
             }
         }
 
+        public async Task<UserMusicModel[]> GetUserTastes(Guid userId)
+        {
+            try
+            {
+                var musicTastes = await _context.UserMusicModels.ToArrayAsync();
+                return musicTastes.Where(t => t.UserId.Equals(userId)).ToArray();
+            }
+            catch (Exception e)
+            {
+                throw new HttpStatusCodeException(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
         public async Task<Guid> CreateUser(UserModel userModelModel)
         {
             try
@@ -89,6 +102,30 @@ namespace MeetMusic.Services
             catch (HttpStatusCodeException)
             {
                 throw;
+            }
+            catch (Exception e)
+            {
+                throw new HttpStatusCodeException(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
+        public async Task UpdateUserTastes(Guid userId, UserMusicModel[] models)
+        {
+            try
+            {
+                var musicTastes = await _context.UserMusicModels.ToArrayAsync();
+                var userMusicTastes = musicTastes.Where(t => t.UserId.Equals(userId)).ToArray();
+                if (userMusicTastes.Any())
+                {
+                    _context.UserMusicModels.RemoveRange(userMusicTastes);
+                    await _context.SaveChangesAsync();
+                }
+                foreach (var model in models)
+                {
+                    model.UserId = userId;
+                    await _context.AddAsync(model);
+                }
+                await _context.SaveChangesAsync();
             }
             catch (Exception e)
             {
@@ -156,7 +193,7 @@ namespace MeetMusic.Services
             destUserModel.Description = sourceUserModel.Description;
             destUserModel.Latitude = sourceUserModel.Longitude;
             destUserModel.Longitude = sourceUserModel.Longitude;
-            
+
             return destUserModel;
         }
     }

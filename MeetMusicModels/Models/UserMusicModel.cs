@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MeetMusicModels.Models
 {
@@ -6,12 +8,14 @@ namespace MeetMusicModels.Models
     public class UserMusicModel
     {
         [Column("user_id")]
-        public int UserId { get; set; }
+        public Guid UserId { get; set; }
 
         [Column("family_id")]
+        [Required]
         public int FamilyId { get; set; }
 
         [Column("rank")]
+        [Required]
         public int Position { get; set; }
     }
 }

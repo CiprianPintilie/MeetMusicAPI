@@ -24,5 +24,6 @@ namespace MeetMusic.Context
         public DbSet<UserModel> Users { get; set; }
         public DbSet<MusicFamilyModel> MusicFamilies{ get; set; }
         public DbSet<MusicGenreModel> MusicGenres { get; set; }
+        public DbSet<UserMusicModel> UserMusicModels { get; set; }
     }
 }
