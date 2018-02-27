@@ -17,7 +17,7 @@ USE `meetmusicdb`;
 
 CREATE TABLE `message` (
   `message_id` int(255) NOT NULL,
-  `user_id` int(255) NOT NULL,
+  `user_id` varchar(36) NOT NULL,
   `message` longtext NOT NULL,
   `message_datetime` datetime NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -29,7 +29,7 @@ CREATE TABLE `message` (
 --
 
 CREATE TABLE `music_user` (
-  `user_id` int(255) NOT NULL,
+  `user_id` varchar(36) NOT NULL,
   `family_id` int(255) NOT NULL,
   `coefficient` float(2,2) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
