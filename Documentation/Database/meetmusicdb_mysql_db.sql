@@ -143,4 +143,7 @@ ALTER TABLE `music_user`
 ALTER TABLE `music_user`
   ADD CONSTRAINT PK_UserMusic PRIMARY KEY (`user_id`,`family_id`);
 
+ALTER TABLE `music_user`
+  MODIFY `coefficient` int(255) NOT NULL;
+
 -- --------------------------------------------------------
