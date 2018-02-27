@@ -133,6 +133,11 @@ namespace MeetMusic.Services
             }
         }
 
+        public async Task SynchronizeUserTastes(Guid id, SynchronizedMusicGenresModel[] model)
+        {
+            
+        }
+
         public async Task DeleteUser(Guid id)
         {
             try

@@ -100,6 +100,20 @@ namespace MeetMusic.Controllers
         }
 
         /// <summary>
+        /// Synchronize user tastes 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="models"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("{id}/synchronize/tastes")]
+        public async Task<IActionResult> SynchronizeUserTastes(Guid userId, [FromBody] SynchronizedMusicGenresModel[] models)
+        {
+            await _userService.SynchronizeUserTastes(userId, models);
+            return Ok();
+        }
+
+        /// <summary>
         /// Delete user by id
         /// </summary>
         /// <param name="id"></param>
