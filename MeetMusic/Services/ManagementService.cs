@@ -19,6 +19,30 @@ namespace MeetMusic.Services
             _context = context;
         }
 
+        public async Task<MusicGenreModel[]> GetAllGenres()
+        {
+            try
+            {
+                return await _context.MusicGenres.ToArrayAsync();
+            }
+            catch (Exception e)
+            {
+                throw new HttpStatusCodeException(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
+        public async Task<MusicFamilyModel[]> GetAllFamilies()
+        {
+            try
+            {
+                return await _context.MusicFamilies.ToArrayAsync();
+            }
+            catch (Exception e)
+            {
+                throw new HttpStatusCodeException(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
         public async Task UpdateFamilies(MusicFamilyUpdateModel[] model)
         {
             try

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MeetMusic.Context;
@@ -13,10 +14,12 @@ namespace MeetMusic.Services
 {
     public class UserService : IUserService
     {
+        private readonly IManagementService _managementService;
         private readonly MeetMusicDbContext _context;
 
-        public UserService(MeetMusicDbContext context)
+        public UserService(IManagementService service, MeetMusicDbContext context)
         {
+            _managementService = service;
             _context = context;
         }
 
@@ -133,9 +136,38 @@ namespace MeetMusic.Services
             }
         }
 
-        public async Task SynchronizeUserTastes(Guid id, SynchronizedMusicGenresModel[] model)
+        public async Task SynchronizeUserTastes(Guid id, SynchronizedMusicGenresModel[] models)
         {
-            
+            var genresList = new List<string>();
+            foreach (var model in models)
+            {
+                genresList.AddRange(model.Genres);
+            }
+            var families = await _managementService.GetAllFamilies();
+            var genres = await _managementService.GetAllGenres();
+            var familiesList = new List<int>();
+            foreach (var genre in genresList)
+            {
+                var family = families.Single(f => f.Id.Equals(
+                    genres.Single(g => g.Name.Equals(genre)).Id
+                )).Id;
+                familiesList.Add(family);
+            }
+            var familiesCount = familiesList.GroupBy(i => i).ToDictionary(f => f.Key, f => f.Count());
+            var sortedFamiliesCount = familiesCount.OrderByDescending(f => f.Value);
+            var position = 1;
+            var userMusicTastes = new List<UserMusicModel>();
+            foreach (var family in sortedFamiliesCount)
+            {
+                userMusicTastes.Add(new UserMusicModel
+                {
+                    UserId = id,
+                    FamilyId = family.Key,
+                    Position = position
+                });
+                position++;
+            }
+            await UpdateUserTastes(id, userMusicTastes.ToArray());
         }
 
         public async Task DeleteUser(Guid id)
