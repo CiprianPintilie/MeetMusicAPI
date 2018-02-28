@@ -26,8 +26,7 @@ namespace MeetMusic.Controllers
         [Route("genres")]
         public async Task<IActionResult> GetAllGenres()
         {
-            await _managementService.GetAllGenres();
-            return Ok();
+            return Ok(await _managementService.GetAllGenres());
         }
 
         /// <summary>
@@ -38,8 +37,7 @@ namespace MeetMusic.Controllers
         [Route("families")]
         public async Task<IActionResult> GetAllFamilies()
         {
-            await _managementService.GetAllFamilies();
-            return Ok();
+            return Ok(await _managementService.GetAllFamilies());
         }
 
         /// <summary>
