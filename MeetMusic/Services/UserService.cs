@@ -179,6 +179,76 @@ namespace MeetMusic.Services
             }
         }
 
+        public async Task<Dictionary<UserModel, double>> MatchUser(Guid id, MatchParametersModel model)
+        {
+            try
+            {
+                var matchedUsers = new Dictionary<UserModel, double>();
+                var user = await GetUser(id);
+                var userTastes = await GetUserTastes(id);
+                var topUserTastes = userTastes.OrderBy(t => t.Position).Take(3).ToArray();
+                var users = await GetAllUsers();
+                foreach (var item in users)
+                {
+                    if (model != null)
+                        if (ComputeDistance(user, item) > model.Radius || model.Gender != 0 && model.Gender != item.Gender)
+                            continue;
+
+                    var matchScore = 0.0;
+                    var tastes = await GetUserTastes(item.Id);
+                    var topTastes = tastes.OrderBy(t => t.Position).Take(3).ToArray();
+                    if (!topUserTastes.Select(t => t.FamilyId).Any(x => topTastes.Select(t => t.FamilyId).Any(y => y == x)))
+                        continue;
+                    foreach (var taste in topUserTastes)
+                    {
+                        var matchedTaste = topTastes.SingleOrDefault(t => t.FamilyId.Equals(taste.FamilyId));
+                        if (matchedTaste == null)
+                            continue;
+                        switch (taste.Position)
+                        {
+                            case 1:
+                                if (matchedTaste.Position == taste.Position)
+                                    matchScore += 50;
+                                else if (matchedTaste.Position - 1 == taste.Position)
+                                    matchScore += 42;
+                                else if (matchedTaste.Position - 2 == taste.Position)
+                                    matchScore += 32;
+                                break;
+                            case 2:
+                                if (matchedTaste.Position == taste.Position)
+                                    matchScore += 35;
+                                else if (matchedTaste.Position + 1 == taste.Position)
+                                    matchScore += 42;
+                                else if (matchedTaste.Position - 1 == taste.Position)
+                                    matchScore += 25;
+                                break;
+                            case 3:
+                                if (matchedTaste.Position == taste.Position)
+                                    matchScore += 15;
+                                else if (matchedTaste.Position + 2 == taste.Position)
+                                    matchScore += 32;
+                                else if (matchedTaste.Position + 1 == taste.Position)
+                                    matchScore += 25;
+                                break;
+                            default:
+                                throw new HttpStatusCodeException(StatusCodes.Status500InternalServerError, "Something went wrong during tastes ranking");
+                        }
+                    }
+                    if (matchScore > 0)
+                        matchedUsers.Add(item, matchScore);
+                }
+                return matchedUsers;
+            }
+            catch (HttpStatusCodeException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                throw new HttpStatusCodeException(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
         public async Task DeleteUser(Guid id)
         {
             try
@@ -241,6 +311,11 @@ namespace MeetMusic.Services
             destUserModel.Longitude = sourceUserModel.Longitude;
 
             return destUserModel;
+        }
+
+        private double ComputeDistance(UserModel user, UserModel secondUser)
+        {
+            throw new NotImplementedException();
         }
     }
 }

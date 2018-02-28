@@ -114,6 +114,19 @@ namespace MeetMusic.Controllers
         }
 
         /// <summary>
+        /// Return matched users
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("{id}/match")]
+        public async Task<IActionResult> MatchUser(Guid id, [FromBody] MatchParametersModel model)
+        {
+            return Ok(await _userService.MatchUser(id, model));
+        }
+
+        /// <summary>
         /// Delete user by id
         /// </summary>
         /// <param name="id"></param>
