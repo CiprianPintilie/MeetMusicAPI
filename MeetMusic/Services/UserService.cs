@@ -126,7 +126,7 @@ namespace MeetMusic.Services
                 foreach (var model in models)
                 {
                     model.UserId = userId;
-                    await _context.AddAsync(model);
+                    await _context.UserMusicModels.AddAsync(model);
                 }
                 await _context.SaveChangesAsync();
             }
@@ -138,36 +138,45 @@ namespace MeetMusic.Services
 
         public async Task SynchronizeUserTastes(Guid id, SynchronizedMusicGenresModel[] models)
         {
-            var genresList = new List<string>();
-            foreach (var model in models)
+            try
             {
-                genresList.AddRange(model.Genres);
-            }
-            var families = await _managementService.GetAllFamilies();
-            var genres = await _managementService.GetAllGenres();
-            var familiesList = new List<int>();
-            foreach (var genre in genresList)
-            {
-                var family = families.Single(f => f.Id.Equals(
-                    genres.Single(g => g.Name.Equals(genre)).Id
-                )).Id;
-                familiesList.Add(family);
-            }
-            var familiesCount = familiesList.GroupBy(i => i).ToDictionary(f => f.Key, f => f.Count());
-            var sortedFamiliesCount = familiesCount.OrderByDescending(f => f.Value);
-            var position = 1;
-            var userMusicTastes = new List<UserMusicModel>();
-            foreach (var family in sortedFamiliesCount)
-            {
-                userMusicTastes.Add(new UserMusicModel
+                var genresList = new List<string>();
+                foreach (var model in models)
                 {
-                    UserId = id,
-                    FamilyId = family.Key,
-                    Position = position
-                });
-                position++;
+                    genresList.AddRange(model.Genres);
+                }
+                var families = await _managementService.GetAllFamilies();
+                var genres = await _managementService.GetAllGenres();
+                var familiesList = new List<int>();
+                foreach (var genre in genresList)
+                {
+                    var familyId = genres.SingleOrDefault(g => g.Name.Equals(genre))?.FamilyId;
+                    if (familyId == null)
+                        continue;
+                    var family = families.Single(f => f.Id.Equals(familyId)).Id;
+                    familiesList.Add(family);
+                }
+                var familiesCount = familiesList.GroupBy(i => i).ToDictionary(f => f.Key, f => f.Count());
+                var sortedFamiliesCount = familiesCount.OrderByDescending(f => f.Value);
+                var position = 1;
+                var userMusicTastes = new List<UserMusicModel>();
+                foreach (var family in sortedFamiliesCount)
+                {
+                    userMusicTastes.Add(new UserMusicModel
+                    {
+                        UserId = id,
+                        FamilyId = family.Key,
+                        Position = position
+                    });
+                    position++;
+                }
+                await UpdateUserTastes(id, userMusicTastes.ToArray());
             }
-            await UpdateUserTastes(id, userMusicTastes.ToArray());
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         public async Task DeleteUser(Guid id)
