@@ -7,10 +7,10 @@ namespace MeetMusicModels.Models
     [Table("music_user")]
     public class UserMusicModel
     {
-        [Column("user_id")]
+        [Column("user_id"), Key]
         public Guid UserId { get; set; }
 
-        [Column("family_id")]
+        [Column("family_id"), Key]
         [Required]
         public int FamilyId { get; set; }
 
