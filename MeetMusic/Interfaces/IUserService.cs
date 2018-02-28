@@ -12,6 +12,7 @@ namespace MeetMusic.Interfaces
         Task<UserMusicModel[]> GetUserTastes(Guid id);
         Task<Guid> CreateUser(UserModel model);
         Task<Guid> UpdateUser(Guid id, UserModel model);
+        Task UpdateUserPosition(Guid id, string latitude, string longitude);
         Task SynchronizeUserTastes(Guid id, SynchronizedMusicGenresModel[] model);
         Task UpdateUserTastes(Guid userId, UserMusicModel[] models);
         Task<Dictionary<UserModel, double>> MatchUser(Guid id, MatchParametersModel model);

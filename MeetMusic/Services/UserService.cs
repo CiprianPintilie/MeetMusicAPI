@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Device.Location;
 using System.Linq;
 using System.Threading.Tasks;
 using MeetMusic.Context;
@@ -101,6 +102,29 @@ namespace MeetMusic.Services
                 _context.Users.Update(CopyUser(userModelModel, user));
                 await _context.SaveChangesAsync();
                 return user.Id;
+            }
+            catch (HttpStatusCodeException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                throw new HttpStatusCodeException(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
+        public async Task UpdateUserPosition(Guid id, string latitude, string longitude)
+        {
+            try
+            {
+                var user = await _context.Users.FindAsync(id);
+                if (user == null)
+                    throw new HttpStatusCodeException(StatusCodes.Status404NotFound,
+                        $"No user with the id '{id}' found");
+                user.Latitude = latitude;
+                user.Longitude = longitude;
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
             }
             catch (HttpStatusCodeException)
             {
@@ -315,7 +339,9 @@ namespace MeetMusic.Services
 
         private double ComputeDistance(UserModel user, UserModel secondUser)
         {
-            throw new NotImplementedException();
+            var userPosition = new GeoCoordinate(double.Parse(user.Latitude), double.Parse(user.Longitude));
+            var secondUserPosition = new GeoCoordinate(double.Parse(secondUser.Latitude), double.Parse(secondUser.Longitude));
+            return Math.Round(userPosition.GetDistanceTo(secondUserPosition) / 1000, 1);
         }
     }
 }

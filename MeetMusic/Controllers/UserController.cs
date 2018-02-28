@@ -80,13 +80,27 @@ namespace MeetMusic.Controllers
         /// <returns></returns>
         [HttpPut]
         [Route("{id}")]
-        public async Task<IActionResult> CreateUser(Guid id, [FromBody]UserModel userModelModel)
+        public async Task<IActionResult> UpdateUser(Guid id, [FromBody]UserModel userModelModel)
         {
             if (!ModelState.IsValid) return BadRequest("Invalid data in model");
             var userId = await _userService.UpdateUser(id, userModelModel);
             return Ok(userId);
         }
 
+        /// <summary>
+        /// Update user position
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="latitude"></param>
+        /// <param name="longitude"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("{id}/position/{latitude}/{longitude}")]
+        public async Task<IActionResult> UpdateUserPosition(Guid id, string latitude, string longitude)
+        {
+            await _userService.UpdateUserPosition(id, latitude, longitude);
+            return Ok();
+        }
 
         /// <summary>
         /// Updates given user tastes using the given model
