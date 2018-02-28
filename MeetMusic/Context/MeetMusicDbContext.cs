@@ -21,6 +21,12 @@ namespace MeetMusic.Context
             optionsBuilder.UseLoggerFactory(fact);
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<UserMusicModel>()
+                .HasKey(c => new { c.UserId, c.FamilyId });
+        }
+
         public DbSet<UserModel> Users { get; set; }
         public DbSet<MusicFamilyModel> MusicFamilies{ get; set; }
         public DbSet<MusicGenreModel> MusicGenres { get; set; }
