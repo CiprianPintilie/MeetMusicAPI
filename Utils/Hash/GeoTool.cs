@@ -6,18 +6,22 @@ namespace Utils.Hash
     {
         public static double Distance(double lat1, double lon1, double lat2, double lon2, char unit)
         {
-            double theta = lon1 - lon2;
-            double dist = Math.Sin(Rad(lat1)) * Math.Sin(Rad(lat2)) + Math.Cos(Rad(lat1)) * Math.Cos(Rad(lat2)) * Math.Cos(Rad(theta));
+            var theta = lon1 - lon2;
+            var dist = Math.Sin(Rad(lat1)) * Math.Sin(Rad(lat2)) + Math.Cos(Rad(lat1)) * Math.Cos(Rad(lat2)) * Math.Cos(Rad(theta));
             dist = Math.Acos(dist);
             dist = Deg(dist);
             dist = dist * 60 * 1.1515;
-            if (unit == 'K')
+            switch (unit)
             {
-                dist = dist * 1.609344;
-            }
-            else if (unit == 'N')
-            {
-                dist = dist * 0.8684;
+                case 'K':
+                    dist = dist * 1.609344;
+                    break;
+                case 'N':
+                    dist = dist * 0.8684;
+                    break;
+                default:
+                    dist = dist * 1.609344;
+                    break;
             }
             return (dist);
         }
