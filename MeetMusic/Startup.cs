@@ -65,7 +65,6 @@ namespace MeetMusic
             else
             {
                 app.UseHttpStatusCodeExceptionMiddleware();
-                app.UseExceptionHandler();
             }
             app.UseAuthentication();
             app.UseMvc();
