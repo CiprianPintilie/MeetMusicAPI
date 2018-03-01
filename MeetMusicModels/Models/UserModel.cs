@@ -62,9 +62,11 @@ namespace MeetMusicModels.Models
         public string Description { get; set; }
 
         [Column("longitude")]
+        [RegularExpression(@"^-?[0-9]\d*(\.\d+)?$", ErrorMessage = "Invalid longitude")]
         public string Longitude { get; set; }
 
         [Column("latitude")]
+        [RegularExpression(@"^-?[0-9]\d*(\.\d+)?$", ErrorMessage = "Invalid longitude")]
         public string Latitude { get; set; }
     }
 }

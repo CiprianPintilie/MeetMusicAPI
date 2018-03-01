@@ -203,19 +203,23 @@ namespace MeetMusic.Services
             }
         }
 
-        public async Task<Dictionary<UserModel, double>> MatchUser(Guid id, MatchParametersModel model)
+        public async Task<MatchModel[]> MatchUser(Guid id, MatchParametersModel model)
         {
             try
             {
-                var matchedUsers = new Dictionary<UserModel, double>();
+                var matchedUsers = new List<MatchModel>();
                 var user = await GetUser(id);
                 var userTastes = await GetUserTastes(id);
                 var topUserTastes = userTastes.OrderBy(t => t.Position).Take(3).ToArray();
                 var users = await GetAllUsers();
                 foreach (var item in users)
                 {
+                    if (item.Id.Equals(id))
+                        continue;
                     if (model != null)
-                        if (ComputeDistance(user, item) > model.Radius || model.Gender != 0 && model.Gender != item.Gender)
+                        if (item.Id.Equals(id)
+                            || model.Gender != 0 && model.Gender != item.Gender
+                            || model.Radius > 0 && ComputeDistance(user, item) > model.Radius)
                             continue;
 
                     var matchScore = 0.0;
@@ -228,40 +232,16 @@ namespace MeetMusic.Services
                         var matchedTaste = topTastes.SingleOrDefault(t => t.FamilyId.Equals(taste.FamilyId));
                         if (matchedTaste == null)
                             continue;
-                        switch (taste.Position)
-                        {
-                            case 1:
-                                if (matchedTaste.Position == taste.Position)
-                                    matchScore += 50;
-                                else if (matchedTaste.Position - 1 == taste.Position)
-                                    matchScore += 42;
-                                else if (matchedTaste.Position - 2 == taste.Position)
-                                    matchScore += 32;
-                                break;
-                            case 2:
-                                if (matchedTaste.Position == taste.Position)
-                                    matchScore += 35;
-                                else if (matchedTaste.Position + 1 == taste.Position)
-                                    matchScore += 42;
-                                else if (matchedTaste.Position - 1 == taste.Position)
-                                    matchScore += 25;
-                                break;
-                            case 3:
-                                if (matchedTaste.Position == taste.Position)
-                                    matchScore += 15;
-                                else if (matchedTaste.Position + 2 == taste.Position)
-                                    matchScore += 32;
-                                else if (matchedTaste.Position + 1 == taste.Position)
-                                    matchScore += 25;
-                                break;
-                            default:
-                                throw new HttpStatusCodeException(StatusCodes.Status500InternalServerError, "Something went wrong during tastes ranking");
-                        }
+                        matchScore += ComputeMatchScore(matchedTaste.Position, taste.Position);
                     }
                     if (matchScore > 0)
-                        matchedUsers.Add(item, matchScore);
+                        matchedUsers.Add(new MatchModel
+                        {
+                            User = item,
+                            MatchScore = matchScore
+                        });
                 }
-                return matchedUsers;
+                return matchedUsers.OrderByDescending(m => m.MatchScore).ToArray();
             }
             catch (HttpStatusCodeException)
             {
@@ -339,9 +319,35 @@ namespace MeetMusic.Services
 
         private double ComputeDistance(UserModel user, UserModel secondUser)
         {
-            var userPosition = new GeoCoordinate(double.Parse(user.Latitude), double.Parse(user.Longitude));
-            var secondUserPosition = new GeoCoordinate(double.Parse(secondUser.Latitude), double.Parse(secondUser.Longitude));
+            var userPosition = new GeoCoordinate(
+                double.Parse(user.Latitude.Replace('.', ',')), 
+                double.Parse(user.Longitude.Replace('.', ','))
+            );
+            var secondUserPosition = new GeoCoordinate(
+                double.Parse(secondUser.Latitude.Replace('.', ',')), 
+                double.Parse(secondUser.Longitude.Replace('.', ','))
+            );
             return Math.Round(userPosition.GetDistanceTo(secondUserPosition) / 1000, 1);
+        }
+
+        private double ComputeMatchScore(int matchedTastePosition, int userTastePosition)
+        {
+            int scoreValue;
+            switch (userTastePosition)
+            {
+                case 1:
+                    scoreValue = 60;
+                    break;
+                case 2:
+                    scoreValue = 40;
+                    break;
+                case 3:
+                    scoreValue = 30;
+                    break;
+                default:
+                    throw new HttpStatusCodeException(StatusCodes.Status500InternalServerError, "Something went wrong during tastes ranking");
+            }
+            return Math.Round((double)scoreValue/matchedTastePosition, 1);
         }
     }
 }
