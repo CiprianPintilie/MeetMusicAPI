@@ -107,9 +107,9 @@ namespace MeetMusic.Controllers
         /// </summary>
         [HttpPut]
         [Route("{id}/tastes")]
-        public async Task<IActionResult> UpdateUserTastes(Guid userId, [FromBody] UserMusicModel[] models)
+        public async Task<IActionResult> UpdateUserTastes(Guid id, [FromBody] UserMusicModel[] models)
         {
-            await _userService.UpdateUserTastes(userId, models);
+            await _userService.UpdateUserTastes(id, models);
             return Ok();
         }
 
