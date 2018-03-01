@@ -68,7 +68,7 @@ namespace MeetMusic.Services
             }
         }
 
-        public async Task<double> GetUsersDistance(Guid firstId, Guid secondId)
+        public async Task<string> GetUsersDistance(Guid firstId, Guid secondId)
         {
             var firstUser = await GetUser(firstId);
             var secondUser = await GetUser(secondId);
@@ -225,7 +225,8 @@ namespace MeetMusic.Services
                     if (model != null)
                         if (item.Id.Equals(id)
                             || model.Gender != 0 && model.Gender != item.Gender
-                            || model.Radius > 0 && ComputeDistance(user, item) > model.Radius)
+                            //|| model.Radius > 0 && ComputeDistance(user, item) > model.Radius)
+                            )
                             continue;
 
                     var matchScore = 0.0;
@@ -323,7 +324,7 @@ namespace MeetMusic.Services
             return destUserModel;
         }
 
-        private double ComputeDistance(UserModel user, UserModel secondUser)
+        private string ComputeDistance(UserModel user, UserModel secondUser)
         {
             var distance = GeoTool.Distance(
                 double.Parse(user.Latitude.Replace('.', ',')),
@@ -332,7 +333,8 @@ namespace MeetMusic.Services
                 double.Parse(secondUser.Longitude.Replace('.', ',')),
                 'K'
             );
-            return Math.Round(distance, 2);
+            //return Math.Round(distance, 2);
+            return distance;
         }
 
         private double ComputeMatchScore(int matchedTastePosition, int userTastePosition)

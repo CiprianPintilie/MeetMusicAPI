@@ -1,29 +1,40 @@
 ﻿using System;
+using System.Text;
 
 namespace Utils.Hash
 {
     public static class GeoTool
     {
-        public static double Distance(double lat1, double lon1, double lat2, double lon2, char unit)
+        public static string Distance(double lat1, double lon1, double lat2, double lon2, char unit)
         {
+            var builder = new StringBuilder();
             var theta = lon1 - lon2;
+            builder.AppendLine($"theta = {theta}");
             var dist = Math.Sin(Rad(lat1)) * Math.Sin(Rad(lat2)) + Math.Cos(Rad(lat1)) * Math.Cos(Rad(lat2)) * Math.Cos(Rad(theta));
+            builder.AppendLine($"dist1 = {dist}");
             dist = Math.Acos(dist);
+            builder.AppendLine($"dist2 = {dist}");
             dist = Deg(dist);
+            builder.AppendLine($"dist3 = {dist}");
             dist = dist * 60 * 1.1515;
+            builder.AppendLine($"dist4 = {dist}");
             switch (unit)
             {
                 case 'K':
                     dist = dist * 1.609344;
+                    builder.AppendLine($"distK = {dist}");
                     break;
                 case 'N':
                     dist = dist * 0.8684;
+                    builder.AppendLine($"distN = {dist}");
                     break;
                 default:
                     dist = dist * 1.609344;
+                    builder.AppendLine($"distD = {dist}");
                     break;
             }
-            return (dist);
+            //return (dist);
+            return builder.ToString();
         }
 
         //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
