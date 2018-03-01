@@ -57,6 +57,13 @@ namespace MeetMusic.Controllers
             return Ok(await _userService.GetUserTastes(id));
         }
 
+        [HttpGet]
+        [Route("{firstId}/{secondId}")]
+        public async Task<IActionResult> GetUsersDistance(Guid firstId, Guid secondId)
+        {
+            return Ok(await _userService.GetUsersDistance(firstId, secondId));
+        }
+
         /// <summary>
         /// Create a new user
         /// </summary>

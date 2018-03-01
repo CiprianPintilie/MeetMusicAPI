@@ -9,6 +9,7 @@ namespace MeetMusic.Interfaces
         Task<UserModel[]> GetAllUsers();
         Task<UserModel> GetUser(Guid id);
         Task<UserMusicModel[]> GetUserTastes(Guid id);
+        Task<double> GetUsersDistance(Guid firstId, Guid secondId);
         Task<Guid> CreateUser(UserModel model);
         Task<Guid> UpdateUser(Guid id, UserModel model);
         Task UpdateUserPosition(Guid id, string latitude, string longitude);

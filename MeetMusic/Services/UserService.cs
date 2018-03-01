@@ -68,6 +68,13 @@ namespace MeetMusic.Services
             }
         }
 
+        public async Task<double> GetUsersDistance(Guid firstId, Guid secondId)
+        {
+            var firstUser = await GetUser(firstId);
+            var secondUser = await GetUser(secondId);
+            return ComputeDistance(firstUser, secondUser);
+        }
+
         public async Task<Guid> CreateUser(UserModel userModelModel)
         {
             try
@@ -318,13 +325,14 @@ namespace MeetMusic.Services
 
         private double ComputeDistance(UserModel user, UserModel secondUser)
         {
-            return GeoTool.Distance(
+            var distance = GeoTool.Distance(
                 double.Parse(user.Latitude.Replace('.', ',')),
                 double.Parse(user.Longitude.Replace('.', ',')),
                 double.Parse(secondUser.Latitude.Replace('.', ',')),
                 double.Parse(secondUser.Longitude.Replace('.', ',')),
                 'K'
             );
+            return Math.Round(distance, 2);
         }
 
         private double ComputeMatchScore(int matchedTastePosition, int userTastePosition)
