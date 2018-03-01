@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using MeetMusic.Context;
@@ -68,7 +69,7 @@ namespace MeetMusic.Services
             }
         }
 
-        public async Task<string> GetUsersDistance(Guid firstId, Guid secondId)
+        public async Task<double> GetUsersDistance(Guid firstId, Guid secondId)
         {
             var firstUser = await GetUser(firstId);
             var secondUser = await GetUser(secondId);
@@ -225,8 +226,7 @@ namespace MeetMusic.Services
                     if (model != null)
                         if (item.Id.Equals(id)
                             || model.Gender != 0 && model.Gender != item.Gender
-                            //|| model.Radius > 0 && ComputeDistance(user, item) > model.Radius)
-                            )
+                            || model.Radius > 0 && ComputeDistance(user, item) > model.Radius)
                             continue;
 
                     var matchScore = 0.0;
@@ -324,17 +324,16 @@ namespace MeetMusic.Services
             return destUserModel;
         }
 
-        private string ComputeDistance(UserModel user, UserModel secondUser)
+        private double ComputeDistance(UserModel user, UserModel secondUser)
         {
             var distance = GeoTool.Distance(
-                double.Parse(user.Latitude.Replace('.', ',')),
-                double.Parse(user.Longitude.Replace('.', ',')),
-                double.Parse(secondUser.Latitude.Replace('.', ',')),
-                double.Parse(secondUser.Longitude.Replace('.', ',')),
+                double.Parse(user.Latitude, CultureInfo.InvariantCulture),
+                double.Parse(user.Longitude, CultureInfo.InvariantCulture),
+                double.Parse(secondUser.Latitude, CultureInfo.InvariantCulture),
+                double.Parse(secondUser.Longitude, CultureInfo.InvariantCulture),
                 'K'
             );
-            //return Math.Round(distance, 2);
-            return distance;
+            return Math.Round(distance, 2);
         }
 
         private double ComputeMatchScore(int matchedTastePosition, int userTastePosition)
