@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Device.Location;
 using System.Linq;
 using System.Threading.Tasks;
 using MeetMusic.Context;
@@ -319,15 +318,13 @@ namespace MeetMusic.Services
 
         private double ComputeDistance(UserModel user, UserModel secondUser)
         {
-            var userPosition = new GeoCoordinate(
-                double.Parse(user.Latitude.Replace('.', ',')), 
-                double.Parse(user.Longitude.Replace('.', ','))
+            return GeoTool.Distance(
+                double.Parse(user.Latitude.Replace('.', ',')),
+                double.Parse(user.Longitude.Replace('.', ',')),
+                double.Parse(secondUser.Latitude.Replace('.', ',')),
+                double.Parse(secondUser.Longitude.Replace('.', ',')),
+                'K'
             );
-            var secondUserPosition = new GeoCoordinate(
-                double.Parse(secondUser.Latitude.Replace('.', ',')), 
-                double.Parse(secondUser.Longitude.Replace('.', ','))
-            );
-            return Math.Round(userPosition.GetDistanceTo(secondUserPosition) / 1000, 1);
         }
 
         private double ComputeMatchScore(int matchedTastePosition, int userTastePosition)
