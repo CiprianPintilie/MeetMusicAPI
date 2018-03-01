@@ -8,6 +8,8 @@ namespace Utils.Hash
         public static string Distance(double lat1, double lon1, double lat2, double lon2, char unit)
         {
             var builder = new StringBuilder();
+            builder.AppendLine($"First position => lat1: {lat1}, lon1: {lon1} ");
+            builder.AppendLine($"Second position => lat2: {lat2}, lon2: {lon2} ");
             var theta = lon1 - lon2;
             builder.AppendLine($"theta = {theta}");
             var dist = Math.Sin(Rad(lat1)) * Math.Sin(Rad(lat2)) + Math.Cos(Rad(lat1)) * Math.Cos(Rad(lat2)) * Math.Cos(Rad(theta));
